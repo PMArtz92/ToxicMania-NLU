@@ -1,0 +1,91 @@
+<resources>
+    <string name="app_name">ToxicMania</string>
+    <string name="About_header">What we do?</string>
+    <string name="terms_of_services_header">Terms of services</string>
+    <string name="terms_of_services">
+        Please confirm the following terms to continue\n\n
+        \t\u25A0 You are participating in this project voluntarily.\n
+        \t\u25A0 You understand that you\'re free to stop at any time.\n
+        \t\u25A0 All your submitted responses will be sent to Google.\n
+        \t\u25A0 All your submitted responses will be used in analytics
+                   purposes in the future works related to perspective API. \n
+        \t\u25A0 There can be hate speech, cursing or sexual comments in a question.\n
+
+    </string>
+    <string name="decline_btn_txt">Decline</string>
+    <string name="accept_btn_txt">Accept</string>
+
+    <string name="about_nextbtn_value">Next</string>
+    <string name="about_content">
+        In a world filled with screened identities, where your only interaction is through a light box and a ridiculous username it’s easy to hurl insults, but it’s difficult to completely rid the world of this menace. ToxicMania accomplishes this social cause with the power of crowdsourcing. Because where a few fail, many can prosper.
+    </string>
+
+    <string name="about_2">
+        By using toxicmania you contribute to identify the toxic sentences that people use in day-today life. These data will be sent to Google to improve their
+        <a href="https://www.perspectiveapi.com">perspective API </a>, which will improve online conversations in the future.
+    </string>
+
+
+    <!-- Sign-in status messages -->
+    <string name="signed_in_fmt">Signed in as: %s</string>
+    <string name="signed_out">Sign in to Procceed</string>
+    <string name="loading">Loading…</string>
+
+    <!-- Google Play Services error for Toast -->
+
+    <!-- Button labels -->
+
+    <!-- Content Description for images -->
+
+    <!-- Rationale for asking for Contacts -->
+
+    <!-- Activity Names and Descriptions -->
+
+    <!-- TODO(user): replace with your real server client ID -->
+    <!-- Server Client ID.  This should be a valid Web OAuth 2.0 Client ID obtained
+         from https://console.developers.google.com/ -->
+    <string name="question_text_view_default">Loading...</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!--Badge Activity Texts-->
+    <string name="badge_congrats">Congratulations.!</string>
+    <string name="continue_btn">Continue</string>
+    <string name="badge_earned">You\'ve earned a new badge!</string>
+    <string name="beginner_badge">Rookie</string>
+    <string name="beginner_badgeDes">Awarded for completing first 20 questions</string>
+
+    <string name="badge02_name">Toxinator</string>
+    <string name="begbadge02_des">Awarded for achieving 300 Reputation</string>
+
+    <string name="badge03_name">Toxician</string>
+    <string name="begbadge03_des">Awarded for achieving 500 Reputation</string>
+
+    <string name="badge04_name">ToxicPro</string>
+    <string name="begbadge04_des">Awarded for achieving 800 Reputation</string>
+
+    <string name="badge05_name">Grand Master</string>
+    <string name="begbadge05_des">Awarded for achieving 1000 Reputation</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+
+    <string name="what_is_toxic">What are Toxic comments?</string>
+    <string name="what_is_toxic_1">Comments posted by people in online conversations that could make others feel uncomfortable,
+        insulted, abused, threatened or hurt.
+    </string>
+
+    <string name="paly_guid">How to Play</string>
+    <string name="paly_guid_1">You need to rate given comments by it\'s toxic level. Below are the index for the toxic ratings.
+    </string>
+
+    <string name="sm_notatall">Not Toxic At All \n (1 star)</string>
+    <string name="sm_somewaht">Somewhat Toxic \n (2 stars)</string>
+    <string name="sm_very">Very Toxic \n (3 stars)</string>
+    <string name="title_activity_temp">TempActivity</string>
+    <string name="title_activity_nav_drawer">ToxicMania</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

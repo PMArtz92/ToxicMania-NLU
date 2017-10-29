@@ -1,0 +1,98 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppThemeNoAction" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splashscreen</item>
+    </style>
+
+    <style name="PlayTheme" parent="AppTheme">
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="playButton" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlHighlight">#b3ff01</item>
+        <item name="colorButtonNormal">#32cb00</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <!-- Submit Button -->
+    <style name="submitButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">#32cb00</item>
+        <item name="colorControlHighlight">#b3ff01</item>
+        <item name="android:textColorPrimary">#fff</item>
+    </style>
+
+    <!-- Skip Button -->
+    <style name="skipButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">#66BB6A</item>
+        <item name="colorControlHighlight">#C8E6C9</item>
+        <item name="android:textColorPrimary">#fff</item>
+    </style>
+
+    <!-- Blue Button -->
+    <style name="blueButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">#0288D1</item>
+        <item name="colorControlHighlight">#4FC3F7</item>
+        <item name="android:textColorPrimary">#fff</item>
+    </style>
+
+    <!-- Yellow Button -->
+    <style name="yellowButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">#FF8F00</item>
+        <item name="colorControlHighlight">#FFC107</item>
+        <item name="android:textColorPrimary">#fff</item>
+    </style>
+
+    <style name="shareButtonStyle" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">#1d39b6</item>
+        <item name="colorControlHighlight">#3b939e</item>
+        <item name="android:textColorPrimary">#fff</item>
+    </style>
+
+    <!-- Dark Buttons -->
+    <style name="ThemeOverlay.MyDarkButton" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="colorButtonNormal">@color/blue_grey_500</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!-- custom rating bar -->
+    <style name="RatingBar" parent="Widget.AppCompat.RatingBar">
+        <item name="colorControlNormal">#ff000d</item>
+        <item name="colorControlActivated">#ffc400</item>
+        <item name="android:colorActivatedHighlight">#ff22ee</item>
+    </style>
+
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+</resources>

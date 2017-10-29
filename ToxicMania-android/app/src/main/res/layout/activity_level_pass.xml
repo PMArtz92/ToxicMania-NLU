@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.toxicmania.toxicmania.activity.LevelPassActivity">
+
+    <TextView
+        android:id="@+id/levelText01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        android:text="Hurray...!"
+        android:textColor="@color/colorSecondary"/>
+
+    <TextView
+        android:id="@+id/level_pass_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/levelText01"
+        android:layout_centerHorizontal="true" />
+    <ImageView
+        android:id="@+id/tm_level_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/tm_icon_logo"
+        android:layout_above="@+id/levelText01"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="14dp" />
+
+    <Button
+        android:id="@+id/nextbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/level_pass_info_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="56dp"
+        android:text="Continue"
+        android:theme="@style/submitButton"/>
+
+</RelativeLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.toxicmania.toxicmania.activity.AboutActivity">
+
+    <TextView
+        android:id="@+id/termsHeader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:text="@string/terms_of_services_header"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorSecondaryDark"/>
+
+    <TextView
+        android:id="@+id/termsBody"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/termsHeader"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="@string/terms_of_services"
+        android:textAlignment="viewStart"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:padding="6dp"
+        android:weightSum="2"
+        android:layout_alignParentBottom="true" >
+
+        <Button
+            android:id="@+id/declineBtn"
+            android:text="@string/decline_btn_txt"
+            android:onClick="declineTerms"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_weight="1"
+            android:theme="@style/skipButton"/>
+
+        <Button
+            android:id="@+id/acceptBtn"
+            android:text="@string/accept_btn_txt"
+            android:onClick="acceptTerms"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_weight="1"
+            android:theme="@style/submitButton"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/colorBg"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp">
+
+<!--<TextView-->
+    <!--android:id="@+id/level_text"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Level :"-->
+    <!--android:layout_alignParentLeft="true"-->
+    <!--android:paddingLeft="20dp"-->
+    <!--android:paddingRight="20dp"/>-->
+
+    <ProgressBar
+        android:id="@+id/level_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="12dp"
+        android:longClickable="true"
+        android:minHeight="15dp"
+        android:progress="50"
+        android:progressDrawable="@drawable/level_progress_bar"
+        android:layout_toStartOf="@+id/level_value" />
+
+
+    <TextView
+        android:id="@+id/level_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/ic_score_bg"
+        android:padding="1dp"
+        android:text="8"
+        android:textAlignment="center"
+        android:textColor="#fff"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

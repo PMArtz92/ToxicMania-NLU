@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorBg"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/rank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/ic_score_bg"
+        android:padding="1dp"
+        android:text="8"
+        android:textAlignment="center"
+        android:textColor="#fff"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/rank"
+        app:srcCompat="@mipmap/ic_launcher_round" />
+
+    <TextView
+        android:id="@+id/userNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/userRepText"
+        android:layout_alignTop="@+id/imageView"
+        android:text="Vihanga Liyanage"
+        android:textColor="@color/black_overlay"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/userRepText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@+id/imageView"
+        android:text="550"
+        android:textColor="@color/colorAccent"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/userRepText"
+        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@+id/userRepText"
+        android:text="Points"
+        android:textColor="@color/black_overlay"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/userQCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView14"
+        android:layout_alignBottom="@+id/textView14"
+        android:layout_marginEnd="5dp"
+        android:layout_toEndOf="@+id/textView14"
+        android:text="230"
+        android:textColor="@color/black_overlay"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/userQCountText"
+        android:layout_toEndOf="@+id/userQCountText"
+        android:text="Questions"
+        android:textColor="@color/black_overlay"
+        android:textSize="13sp" />
+</RelativeLayout>

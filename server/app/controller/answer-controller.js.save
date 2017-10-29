@@ -1,0 +1,403 @@
+const mysql = require('mysql');
+const config = require('../config/conf');
+
+
+var connection = mysql.createConnection(
+    config.database
+);
+
+module.exports.postAnswer = function(req, res, next) {
+
+  var U_Id = req.body.U_Id;
+  var Q_Id = req.body.Q_Id;
+  var Readable = req.body.Readable;
+  var Toxicity = req.body.Toxicity;
+  var Skipped = req.body.Skipped;
+  var type = Q_Id.split('#A#-')[0];
+  var sql  = '';
+  if (type == 'A'){
+    let sql = 'INSERT INTO `user_answer` (`U_Id`, `Q_Id`, `Readable`, `Toxicity`, `Posted`,`Skipped`) VALUES (?,?,?,?,?,?)';
+  }else if (type == 'B') {
+    let sql =  'INSERT INTO `user_known_answer` (`U_Id`, `Q_Id`, `Readable`, `Toxicity`, `Posted`,`Skipped`) VALUES (?,?,?,?,?,?)';
+  }else{
+    return next("Invalid Question Id");
+  }
+  connection.query(sql,[U_Id,Q_Id,Readable,Toxicity,0], function(err, rows, fields) {
+    if (err) return next(err);
+    res.send(rows);
+    });
+};
+
+
+module.exports.postAnswerMock = function(req, res, next) {
+  res.send(req.body);
+};
+
+
+
+module.exports.postAnswerMultiplay = function(req, res, next) {
+    // u_id, answers, mult_session must come in the api call
+
+    var answers = JSON.parse(req.body.answers);
+    var mult_session = JSON.parse(req.body.mult_session);
+    var mode = 'multi';
+    var u_id = req.body.u_id;
+    var promises = [];
+
+    answers.questions.forEach(function (element) {
+        var x = saveUserAnswer(u_id, element, mode);
+        promises.push(x);
+    });
+
+    // Return true if exit condition is met
+    let exit = checkExit(mult_session);
+    if (exit == true){
+        // Call chamath's method here
+        makeSummary(mult_session);
+    }
+
+    Promise.all(promises)
+        .then(function (results) {
+            connection.beginTransaction(function (error) {
+                if (error) {console.log(error);}
+
+                // Return updated marks from session_user
+                let sql = 'SELECT * FROM Session_user WHERE U_Id = ?';
+                connection.query(sql,[u_id], function(err, rows, fields) {
+                    if (err) {
+                        return connection.rollback(function () {
+                            console.log(err);
+                        });
+                    }
+                    connection.commit(function (error) {
+                        if (error){
+                            return connection.rollback(function () {
+                                console.log(error);
+                            })
+                        }
+                    });
+                    res.send({'result': rows});
+                });
+            });
+        })
+        .catch(function (err) {
+            console.log("Failed:", err);
+            return next(err);
+        });
+};
+
+
+module.exports.postAnswerSingleplay = function(req, res, next) {
+
+    // u_id, answers must come in the api call
+
+    //var answers = JSON.parse(req.body.answers);
+    var answers = req.body.answers;
+    var mode = 'single';
+    var u_id = req.body.u_id;
+    var promises = [];
+
+    answers.questions.forEach(function (element) {
+        var x = saveUserAnswer(u_id, element, mode);
+        promises.push(x);
+    });
+
+    Promise.all(promises)
+        .then(function (results) {
+            connection.beginTransaction(function (error) {
+                if (error) {console.log(error);}
+
+                // Return the updated marks results for the user
+                let sql = 'SELECT * FROM user WHERE U_Id = ?';
+                connection.query(sql,[u_id], function(err, rows, fields) {
+                    if (err){
+                        return connection.rollback(function () {
+                            console.log(err);
+                        })
+                    }
+                    connection.commit(function (error) {
+                        if (error){
+                            return connection.rollback(function () {
+                                console.log(error);
+                            })
+                        }
+                    });
+                    res.send({'result': rows});
+                });
+
+            });
+        })
+        .catch(function (err) {
+            console.log("Failed:", err);
+            return next(err);
+        });
+
+};
+
+function saveUserAnswer(u_id, ans, mode){
+  // TODO:
+  // save Users answer to relevent table : answer, knownanswer (based on Q_Id)
+  // Update users marks accodingly.
+  // Increment usage count of question
+
+    var q_id = ans.id;
+    var readability = ans.readability;
+    var toxicity = ans.toxicity;
+    var skipped = ans.skipped;
+    var marks = 0;
+    var weight = 10;
+
+    var type = q_id.split('#A#-')[0];
+
+    var saveAnswer = new Promise(function(resolve, reject) {
+        if (type == 'A'){
+
+            connection.beginTransaction(function (error) {
+                if (error) {
+                    reject();
+                    console.log(error);
+                }
+                // Add new record to the user_answer table
+                let sql = 'INSERT INTO `user_answer` (`U_Id`, `Q_Id`, `Readable`, `Toxicity`, `Posted`, `Skipped`) VALUES (?,?,?,?,?,?)';
+                connection.query(sql,[u_id,q_id,readability,toxicity,0, skipped], function(err, rows, fields) {
+                    if (err){
+                        return connection.rollback(function () {
+                            reject();
+                            console.log(err);
+                        })
+                    }
+                    else{
+                        if (skipped == 1){
+                            connection.commit(function (error) {
+                                if (error){
+                                    return connection.rollback(function () {
+                                        reject();
+                                        console.log(error);
+                                    })
+                                }
+                                resolve('Complete');
+
+                            });
+                        }
+                        else{
+                            // Increment question counter at question table
+                            let sql = 'UPDATE question SET Used_Count = Used_Count + 1 WHERE Q_Id = ?';
+
+                            connection.query(sql,[q_id], function(err, rows, fields) {
+                                if (err){
+                                    return connection.rollback(function () {
+                                        reject();
+                                        console.log(err);
+                                    })
+                                }
+                                connection.commit(function (error) {
+                                    if (error){
+                                        return connection.rollback(function () {
+                                            reject();
+                                            console.log(error);
+                                        })
+                                    }
+                                    resolve('Complete');
+                                });
+                            });
+                        }
+                    }
+                });
+
+            });
+
+
+        }else if (type == 'B') {
+
+            connection.beginTransaction(function (error) {
+                if (error) {
+                    reject();
+                    console.log(error);
+                }
+
+                // Add new record to the user_known_answer table
+                let sql =  'INSERT INTO `user_known_answer` (`U_Id`, `Q_Id`, `Readable`, `Toxicity`, `Posted`, `Skipped`) VALUES (?,?,?,?,?,?)';
+                connection.query(sql,[u_id,q_id,readability,toxicity,0, skipped], function(err, rows, fields) {
+                    if (err){
+                        return connection.rollback(function () {
+                            reject();
+                            console.log(err);
+                        })
+                    }
+                    else {
+                        if (skipped == 1){
+                            connection.commit(function (error) {
+                                if (error){
+                                    return connection.rollback(function () {
+                                        reject();
+                                        console.log(error);
+                                    })
+                                }
+                                resolve('Complete');
+                            });
+                        }
+                        else{
+                            // Increment question counter at known_
+questions table
+                            let sql = 'UPDATE known_questions SET Used_Count = Used_Count + 1 WHERE Q_Id = ?';
+
+                            connection.query(sql,[q_id], function(err, rows, fields) {
+                                if (err){
+                                    return connection.rollback(function () {
+                                        reject();
+                                        console.log(err);
+                                    })
+                                }
+                                else {
+                                    // Get Readable and Toxicity data from known_questions table
+                                    let sql = 'SELECT Readable, Toxicity FROM known_questions WHERE Q_Id = ?';
+                                    connection.query(sql,[q_id], function(err, rows, fields) {
+                                        if (err){
+                                            return connection.rollback(function () {
+                                                reject();
+                                                console.log(err);
+                                            })
+                                        }
+                                        else {
+                                            let readable = JSON.parse(rows[0].Readable);
+
+                                            // Check if user has set readability to false in a readable answer
+                                            if (readability == false){
+                                                if (readable.yes == 1){
+                                                    marks = marks - 0.5;
+                                                }
+                                            }
+
+                                            else {
+                                                let toxic = JSON.parse(rows[0].Toxicity);
+                                                marks = marks + toxic[toxicity];
+                                            }
+
+                                            marks = marks * weight;
+
+                                            if (mode == 'single'){
+
+                                                // Update marks in the user table for single player games
+                                                let sql = 'UPDATE user SET Mark = Mark + ? WHERE U_Id = ?';
+                                                connection.query(sql,[marks, u_id], function(err, rows, fields) {
+                                                    if (err){
+                                                        return connection.rollback(function () {
+                                                            reject();
+                                                            console.log(err);
+                                                        })
+                                                    }
+                                                    connection.commit(function (error) {
+                                                        if (error){
+                                                            return connection.rollback(function () {
+                                                                reject();
+                                                                console.log(error);
+                                                            })
+                                                        }
+                                                        resolve('Complete');
+                                                    });
+                                                });
+                                            }
+
+                                            else{
+
+                                                // Update marks in the session_user table for multiplayer games
+                                                let sql = 'UPDATE Session_user SET Mark = Mark + ? WHERE U_Id = ?';
+                                                connection.query(sql,[marks, u_id], function(err, rows, fields) {
+                                                    if (err){
+                                                        return connection.rollback(function () {
+                                                            reject();
+                                                            console.log(err);
+                                                        })
+                                                    }
+                                                    connection.commit(function (error) {
+                                                        if (error){
+                                                            return connection.rollback(function () {
+                                                                reject();
+                                                                console.log(error);
+                                                            })
+                                                        }
+                                                        resolve('Complete');
+                                                    });
+                                                });
+                                            }
+
+
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+
+        }
+    });
+    return saveAnswer;
+
+}
+
+function checkExit(session_id){
+
+    // Increment respond_count in session table
+    let sql = 'UPDATE Session SET Respond_Count = Respond_Count + 1 WHERE Se_Id = ?';
+    connection.query(sql,[session_id], function(err, rows, fields) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            console.log('count updated');
+        }
+    });
+
+    let sql2 = 'SELECT Player_Count, Respond_Count FROM Session WHERE Se_Id = ?';
+    connection.query(sql2,[session_id], function(err, rows, fields) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            let p_count = rows[0].Player_Count;
+            let r_count = rows[0].Respond_Count;
+
+            if (p_count == r_count){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+    });
+}
+
+
+function makeSummary(Se_Id) {
+  console.log(Se_Id);
+  var sql = 'SELECT * FROM `Session_user` WHERE `Se_Id` = ?;';
+  connection.query(sql,[Se_Id],function(err, rows, fields) {
+    if (err) {
+      console.log(err);
+      return err;
+    }
+    let result = rows;
+    result.sort(function(a, b) {
+        var nameA = parseInt(a.Mark);
+        var nameB = parseInt(b.Mark);
+        if (nameA < nameB) {
+          return 1;
+        }
+        if (nameA > nameB) {
+          return -1;
+        }
+        return 0;
+      });
+    let sql = 'UPDATE `Session` SET `Ready`= ? , `Summary`  = ? WHERE `Se_Id` = ?;';
+    connection.query(sql,[1,JSON.stringify(result),Se_Id],function(err, rows, fields) {
+      if (err) {
+        console.log(err);
+        return err;
+      }
+      console.log("Complete");
+      // need firebase trigger
+    });
+  });
+}

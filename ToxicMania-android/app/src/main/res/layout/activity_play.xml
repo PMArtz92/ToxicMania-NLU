@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.toxicmania.toxicmania.activity.PlayActivity"
+    android:background="@color/colorBg">
+
+    <include layout="@layout/action_bar"/>
+
+    <TextView
+        android:id="@+id/questionTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="230dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="70dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:includeFontPadding="true"
+        android:background="@drawable/play_textview"
+        android:padding="5dp"
+        android:text="@string/question_text_view_default"
+        android:textAlignment="textStart"
+        android:textAllCaps="false"
+        android:textSize="22sp"
+        android:typeface="normal"
+        android:scrollbars="vertical"
+        android:textColor="#000"/>
+
+    <!--add style="@style/CustomRating" for custom rating-->
+    <RatingBar
+        android:id="@+id/ratingBar"
+        style="@style/Widget.AppCompat.RatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkBox"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:isIndicator="false"
+        android:numStars="3"
+        android:stepSize="1.0" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="123dp"
+        android:layout_alignTop="@+id/questionTextView"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/submitBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/questionTextView"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="18dp"
+        android:onClick="submitAnswer"
+        android:text="Submit"
+        style="@style/submitButton"/>
+
+    <Button
+        android:id="@+id/skipBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="skipQuestion"
+        android:text="Skip"
+        android:layout_alignBaseline="@+id/submitBtn"
+        android:layout_alignBottom="@+id/submitBtn"
+        android:layout_alignStart="@+id/questionTextView"
+        android:theme="@style/skipButton"/>
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:checked="true"
+        android:text="Readable in English"
+        android:textSize="16sp"
+        android:layout_below="@+id/questionTextView"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:id="@+id/rateSmile"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:src="@drawable/rating_smile_face"
+        android:layout_below="@+id/ratingBar"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

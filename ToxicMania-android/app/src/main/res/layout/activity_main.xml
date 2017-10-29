@@ -1,0 +1,97 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <!-- The main content view -->
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBg">
+
+        <!--<include layout="@layout/action_bar"/>-->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/tm_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/play_button"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="21dp"
+                android:src="@drawable/bg_toxicmania_logo" />
+
+            <Button
+                android:id="@+id/play_button"
+                android:theme="@style/playButton"
+                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:text="Play"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
+            <Button
+                android:id="@+id/mplay_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Multiplayer"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/play_button"/>
+            <Button
+                android:id="@+id/exit_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exit"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="exitFunc"
+                android:layout_below="@id/mplay_button" />
+
+            <Button
+
+                android:id="@+id/leaderboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Leaderboard"
+                android:layout_below="@+id/exit_button"
+                android:layout_centerHorizontal="true" />
+
+            <Button
+                android:id="@+id/testBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Test"
+                android:layout_below="@+id/leaderboard"
+                android:layout_alignStart="@+id/exit_button" />
+
+
+        </RelativeLayout>
+
+
+
+    </FrameLayout>
+
+    <!-- The navigation drawer -->
+
+    <ListView
+        android:id="@+id/left_drawer"
+        android:layout_width="260dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#1a1c25"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/holo_green_light"
+        android:dividerHeight="5dp" />
+
+
+</android.support.v4.widget.DrawerLayout>
+
+
+

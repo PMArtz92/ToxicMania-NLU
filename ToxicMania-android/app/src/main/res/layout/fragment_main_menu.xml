@@ -1,0 +1,62 @@
+<FrameLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBg"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <!--<include layout="@layout/action_bar"/>-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/tm_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/play_button"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="21dp"
+            android:src="@drawable/bg_toxicmania_logo" />
+
+        <Button
+            android:id="@+id/play_button"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Play"
+            android:theme="@style/playButton" />
+
+        <Button
+            android:id="@+id/mplay_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/play_button"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Multiplayer"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/exit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/mplay_button"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Exit"
+            android:textSize="18sp" />
+
+        <!--<Button-->
+        <!--android:id="@+id/testBtn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignEnd="@+id/play_button"-->
+        <!--android:layout_below="@+id/exit_button"-->
+        <!--android:layout_marginTop="32dp"-->
+        <!--android:text="Test" />-->
+
+    </RelativeLayout>
+</FrameLayout>
+
+

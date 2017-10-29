@@ -1,0 +1,119 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.toxicmania.toxicmania.activity.LeaderBoardFragment">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/blue_grey_700">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="invisible"/>
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="48dp"
+            android:text="Your Rank"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/userRank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="13dp"
+            android:layout_toEndOf="@+id/textView8"
+            android:text="0"
+            android:textColor="@color/colorAccent"
+            android:textSize="35sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/userRepText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@color/colorBg"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:layout_alignTop="@+id/userRank"
+            android:layout_toEndOf="@+id/userRank"
+            android:layout_marginStart="20dp"/>
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/userRepText"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/userRepText"
+            android:text="Points Earned"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/userQCountText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/userRepText"
+            android:layout_below="@+id/userRepText"
+            android:layout_marginTop="2dp"
+            android:text="0"
+            android:textColor="@color/colorBg"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/userQCountText"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/userQCountText"
+            android:text="Questions Rated"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="17sp" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/relativeLayout">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <ListView
+                android:id="@+id/leader_board_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="16dp"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="16dp"
+                android:transcriptMode="alwaysScroll" />
+
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_achievements"
+            android:icon="@drawable/ic_acchievement"
+            android:title="Achievements" />
+        <item
+            android:id="@+id/nav_leaderBoard"
+            android:icon="@drawable/ic_trophy"
+            android:title="Leader Board" />
+        <item
+            android:id="@+id/nav_howtoPlay"
+            android:icon="@drawable/ic_google_controller"
+            android:title="How To Play" />
+    </group>
+
+    <group
+        android:id="@+id/menu_bottom"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_info"
+            android:title="About" />
+    </group>
+</menu>
