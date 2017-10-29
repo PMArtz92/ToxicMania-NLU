@@ -6,10 +6,11 @@ ToxicMania is an android application developed to rate toxic sentences people us
 
 ![](https://i.imgur.com/txrffud.png)
 
-##How to play
+
+# How to play
 
 You have to rate the given sentence in the application by saying whether that sentence is toxic or not. 
-####What is a toxic sentence 
+## What is a toxic sentence 
 Discussing things you care about can be difficult. The threat of abuse and harassment online means that many people stop expressing themselves and give up on seeking different opinions.
 
 ![](https://i.imgur.com/ncyJu9C.png)
