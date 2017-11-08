@@ -2,6 +2,6 @@ module.exports = {
     'secret': 'nodeauthsecret',
     'database': { host     : 'localhost',
                   user     : 'root',
-                  password : '',
+                  password : 'ucsc@123',
                   database : 'toxicmania'}
 };

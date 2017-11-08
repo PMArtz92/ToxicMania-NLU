@@ -40,7 +40,7 @@ module.exports.postnewUser = function(req, res, next) {
 
     // INSERT INTO `user` (`U_Id`, `Email`, `Weight`, `Level`, `Mark`, `User_Name`, `U_Img`) VALUES (?,?,?,?,?,?,?);
     let sql = "INSERT IGNORE INTO `user` (`U_Id`, `Email`, `Weight`, `Level`, `Mark`, `User_Name`, `U_Img`) VALUES (?,?,?,?,?,?,?);";
-    connection.query(sql,[U_Id,U_Email,0,0,0,U_Name,U_Img],function(err, rows, fields) {
+    connection.query(sql,[U_Id,U_Email,0,1,0,U_Name,U_Img],function(err, rows, fields) {
       if (err) return next(err);
         let sql = "SELECT * FROM `user` WHERE `U_Id` = ?";
         connection.query(sql,[U_Id],function(err, rows, fields) {

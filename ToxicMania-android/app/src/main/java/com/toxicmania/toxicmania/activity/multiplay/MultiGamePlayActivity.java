@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -25,26 +26,25 @@ import com.toxicmania.toxicmania.User;
 
 public class MultiGamePlayActivity extends AppCompatActivity {
 
-    private static final String TAG = "PlayActivity";
+    private static final String TAG = "MultiplayActivity";
     private MultiGameController controller;
     private CheckBox readableCheck;
-    private RatingBar rating;
     private Button submitBtn, skipBtn;
-    private ProgressBar p, levelProgressBar;
-    private TextView questionText;
-    private int level;
-    private int levelProgress = 0;
+    private ProgressBar p, levelProgressBar, timerProgress;
+    private TextView questionText, timerText;
+    private int level, rateValue=0, levelProgress=0;
     private String[] toxicities = {"notatall", "somewhat", "very"};
-    // TODO: 10/24/2017 change below
-    private int levelBound = 5;
+    private int levelBound = 20;
     private Question curQuestion;
-    private ImageView rateSimile;
     private Animation smileAnimation;
     private String gameKey;
+    private ImageView img01, img02, img03;
+    boolean imgb01 = false, imgb02= false, imgb03= false;
+    private CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //Log.i(TAG, "Starting Play activity...");
+        ////Log.i(TAG, "Starting Play activity...");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multy_play);
 
@@ -62,17 +62,15 @@ public class MultiGamePlayActivity extends AppCompatActivity {
         questionText = (TextView) findViewById(R.id.questionTextView);
         levelProgressBar = (ProgressBar) findViewById(R.id.level_progress);
         p = (ProgressBar) findViewById(R.id.progressBar);
-        rating = (RatingBar) findViewById(R.id.ratingBar);
         submitBtn = (Button) findViewById(R.id.submitBtn);
         skipBtn = (Button) findViewById(R.id.skipBtn);
         readableCheck = (CheckBox) findViewById(R.id.checkBox);
-        rateSimile = (ImageView)findViewById(R.id.rateSmile);
         smileAnimation = AnimationUtils.loadAnimation(this,R.anim.smile_slide);
 
         // set fonts
-        Typeface robotoRegular = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Regular.ttf");
-        questionText.setTypeface(robotoRegular);
-        readableCheck.setTypeface(robotoRegular);
+        Typeface robotoLight = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
+        questionText.setTypeface(robotoLight);
+        readableCheck.setTypeface(robotoLight);
 
         questionText.setMovementMethod(new ScrollingMovementMethod());
 
@@ -80,49 +78,97 @@ public class MultiGamePlayActivity extends AppCompatActivity {
         levelProgressBar.setMax(levelBound);
         levelProgressBar.setProgress(levelProgress);
 
-        // Loading first question
-        getNextQuestionHandler();
-
-        //disable submit btn if not rated
-        rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                if (rating == 0.0) {
-                    submitBtn.setEnabled(false);
-                    rateSimile.clearAnimation();
-                    rateSimile.setVisibility(View.INVISIBLE);
-                } else {
-                    submitBtn.setEnabled(true);
-                    //set similes according to rating
-                    if (rating == 1.0){
-                        rateSimile.setImageResource(R.drawable.rating_smile_face);
-                    }
-                    else if(rating == 2.0){
-                        rateSimile.setImageResource(R.drawable.rating_nutral_face);
-                    }
-                    else if(rating == 3.0){
-                        rateSimile.setImageResource(R.drawable.rating_angry_face);
-                    }
-                    rateSimile.startAnimation(smileAnimation);
-                    rateSimile.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+        img01 = (ImageView)findViewById(R.id.rtSmile);
+        img02 = (ImageView)findViewById(R.id.rtNutral);
+        img03 = (ImageView)findViewById(R.id.rtAngry);
 
         // disable rating if not readable
         readableCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if ( !isChecked ) {
-                    rating.setEnabled(false);
+                    img01.setImageResource(R.drawable.new_rating_smile_grey);
+                    img02.setImageResource(R.drawable.new_rating_nutral_grey);
+                    img03.setImageResource(R.drawable.new_rating_angry_grey);
+                    imgb01 = false;
+                    imgb02 = false;
+                    imgb03 = false;
+                    rateValue = 0;
+                    //Log.i(TAG,"Check box ---> " + rateValue);
+                    //rating.setEnabled(false);
                     submitBtn.setEnabled(true);
                 } else {
-                    rating.setEnabled(true);
-                    if (rating.getRating() == 0.0)
+                    //rating.setEnabled(true);
+                    if (rateValue == 0)
                         submitBtn.setEnabled(false);
                 }
             }
         });
+
+        img01.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!imgb01){
+                    if(readableCheck.isChecked()){
+                        img01.setImageResource(R.drawable.new_rating_smile);
+                        img02.setImageResource(R.drawable.new_rating_nutral_grey);
+                        img03.setImageResource(R.drawable.new_rating_angry_grey);
+                        imgb01 = true;
+                        rateValueSet(1);
+                        imgb02 = false;
+                        imgb03 = false;
+                        //Log.i(TAG,"Image 01" + rateValue);
+                    }
+                }
+
+            }
+        });
+
+        img02.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!imgb02){
+                    if(readableCheck.isChecked()){
+                        img01.setImageResource(R.drawable.new_rating_smile_grey);
+                        img02.setImageResource(R.drawable.new_rating_nutral);
+                        img03.setImageResource(R.drawable.new_rating_angry_grey);
+                        imgb01 = false;
+                        rateValueSet(2);
+                        imgb02 = true;
+                        imgb03 = false;
+                        //Log.i(TAG,"Image 02" + rateValue);
+                    }
+                }
+
+            }
+        });
+
+        img03.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!imgb03){
+                    if(readableCheck.isChecked()){
+                        img01.setImageResource(R.drawable.new_rating_smile_grey);
+                        img02.setImageResource(R.drawable.new_rating_nutral_grey);
+                        img03.setImageResource(R.drawable.new_rating_angry);
+                        imgb01 = false;
+                        rateValueSet(3);
+                        imgb02 = false;
+                        imgb03 = true;
+                        //Log.i(TAG,"Image 03" + rateValue);
+                    }
+                }
+
+            }
+        });
+
+        // init timerProgress progress
+        timerProgress = (ProgressBar) findViewById(R.id.timer);
+        timerText = (TextView) findViewById(R.id.timerText);
+        startTimer();
+
+        // Loading first question
+        getNextQuestionHandler();
     }
 
     @Override
@@ -139,6 +185,7 @@ public class MultiGamePlayActivity extends AppCompatActivity {
     }
 
     private void exit(boolean state) {
+        countDownTimer.cancel();
         controller.submitQuestionSetToServer();
         SharedPreferences sharedPreferences = getSharedPreferences("PREFS", 0);
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
@@ -149,7 +196,7 @@ public class MultiGamePlayActivity extends AppCompatActivity {
 
     public void submitAnswer(View v) {
         if (readableCheck.isChecked()) {
-            curQuestion.setToxicity(toxicities[(int)rating.getRating() - 1]);
+            curQuestion.setToxicity(toxicities[rateValue - 1]);
         } else {
             //ask for confirmation
             new AlertDialog.Builder(this)
@@ -159,8 +206,14 @@ public class MultiGamePlayActivity extends AppCompatActivity {
 
                         public void onClick(DialogInterface dialog, int whichButton) {
                             curQuestion.setReadability(false);
+                            dialog.dismiss();
                         }})
-                    .setNegativeButton(android.R.string.no, null).show();
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).show();
         }
         levelProgress++;
         if (levelProgress == levelBound) {
@@ -192,11 +245,18 @@ public class MultiGamePlayActivity extends AppCompatActivity {
         //Log.i(TAG, "getNextQuestionHandler");
         p.setVisibility(View.VISIBLE);
         questionText.setText("Loading...");
-        submitBtn.setEnabled(false);
         readableCheck.setEnabled(false);
-        rating.setEnabled(false);
-        rateSimile.clearAnimation();
-        rateSimile.setVisibility(View.INVISIBLE);
+        readableCheck.setChecked(false);
+        submitBtn.setEnabled(false);
+        skipBtn.setEnabled(false);
+
+        img01.setImageResource(R.drawable.new_rating_smile_grey);
+        img02.setImageResource(R.drawable.new_rating_nutral_grey);
+        img03.setImageResource(R.drawable.new_rating_angry_grey);
+        imgb01 = false;
+        imgb02 = false;
+        imgb03 = false;
+        rateValue = 0;
 
         controller.getNextQuestion();
     }
@@ -206,9 +266,51 @@ public class MultiGamePlayActivity extends AppCompatActivity {
         curQuestion = question;
         p.setVisibility(View.GONE);
         questionText.setText(question.getText());
-        rating.setRating(0);
-        rating.setEnabled(true);
+        questionText.scrollTo(0, 0);
         readableCheck.setEnabled(true);
         readableCheck.setChecked(true);
+        skipBtn.setEnabled(true);
+    }
+
+    //rate value function
+    public void rateValueSet(int a){
+        if(!submitBtn.isEnabled()){
+            submitBtn.setEnabled(true);
+        }
+        switch (a){
+            case 1:
+                rateValue = 1;
+                break;
+            case 2:
+                rateValue = 2;
+                break;
+            case 3:
+                rateValue = 3;
+                break;
+        }
+    }
+
+    private void startTimer() {
+        final int timeout = 4*60; //in seconds
+        timerProgress.setMax(timeout);
+        countDownTimer = new CountDownTimer(timeout*1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                int time = (int)millisUntilFinished/1000;
+                timerProgress.setProgress(time);
+                timerText.setText("Time left: " + time + " seconds." );
+            }
+
+            @Override
+            public void onFinish() {
+                exit(true);
+            }
+        };
+        countDownTimer.start();
+    }
+
+    public void setLevelBound(int bound) {
+        this.levelBound = bound;
+        levelProgressBar.setMax(levelBound);
     }
 }

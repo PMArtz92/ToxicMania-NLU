@@ -6,20 +6,24 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.toxicmania.toxicmania.R;
+import com.toxicmania.toxicmania.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,20 +34,50 @@ import org.json.JSONObject;
  */
 public class MultiplayResultFragment extends Fragment {
 
-    private ProgressBar waitProgress, timerProgress;
-    private TextView timerText, waitPlayersText, firstPlaceText, secondPlaceText, thirdPlaceText;
+    private ProgressBar timerProgress;
+    private TextView timerText, playerCountText, playerCountDesText;
     private Button continueBtn;
+    private String TAG = "MultiplayResultFragment";
+    CountDownTimer countDownTimer;
+    private BroadcastReceiver receiver;
+    private User user;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // listener for firebase messages
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver((mMessageReceiver),
-                new IntentFilter("MyData")
-        );
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("PREFS", 0);
+        user = new User(sharedPreferences.getString("ToxicUser", ""));
         return inflater.inflate(R.layout.fragment_multiplay_result, container, false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences settings = getActivity().getSharedPreferences("PREFS", 0);
+        if (settings.contains("isGameFinished")) {
+            boolean isGameFinished = settings.getBoolean("isGameFinished", false);
+            settings.edit().remove("isGameFinished").apply();
+            if (isGameFinished) {
+                getActivity().getFragmentManager().popBackStack();
+                getActivity().finish();
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            getActivity().unregisterReceiver(receiver);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("Receiver not registered")) {
+                // Ignore this exception. This is exactly what is desired
+                Log.w(TAG,"Tried to unregister the reciver when it's not registered");
+            } else {
+                // unexpected, re-throw
+                throw e;
+            }
+        }
     }
 
     @Override
@@ -51,15 +85,11 @@ public class MultiplayResultFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //init variables
-        waitProgress = (ProgressBar) getActivity().findViewById(R.id.progressBar);
         timerProgress = (ProgressBar) getActivity().findViewById(R.id.timer);
         timerText = (TextView) getActivity().findViewById(R.id.timerText);
-        waitPlayersText = (TextView) getActivity().findViewById(R.id.waitPlayerText);
-        firstPlaceText = (TextView) getActivity().findViewById(R.id.firstPlace);
-        secondPlaceText = (TextView) getActivity().findViewById(R.id.secondPlace);
-        thirdPlaceText = (TextView) getActivity().findViewById(R.id.thirdPlace);
         continueBtn = (Button) getActivity().findViewById(R.id.continueBtn);
-
+        playerCountText = (TextView) getActivity().findViewById(R.id.playerCount);
+        playerCountDesText = (TextView) getActivity().findViewById(R.id.playerCountDescription);
         continueBtn.setVisibility(View.INVISIBLE);
         continueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,48 +98,53 @@ public class MultiplayResultFragment extends Fragment {
             }
         });
 
-        startTimer();
-    }
+        // setting up broadcast receiver
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String msg = intent.getExtras().getString("text");
+                if (msg != null) {
+                    Log.i(TAG, msg);
+                    try {
+                        JSONObject obj = new JSONObject(msg);
+                        String event = obj.getString("event");
+                        if (event.equals("finish")) {
+                            String status = obj.getString("status");
+                            if (status.equals("gameFinished")) {
+                                String playersStr = obj.getString("players");
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String msg = intent.getExtras().getString("text");
-            try {
-                JSONObject obj = new JSONObject(msg);
-                String event = obj.getString("event");
-                if (event.equals("finish")) {
-                    // change ui elements
-                    waitPlayersText.setText("Congratulations for the winners!");
-                    waitProgress.setVisibility(View.INVISIBLE);
-                    timerText.setVisibility(View.INVISIBLE);
-                    timerProgress.setVisibility(View.INVISIBLE);
-                    continueBtn.setVisibility(View.VISIBLE);
+                                Intent i = new Intent(getActivity(), MultiplayLeaderBoardActivity.class);
+                                i.putExtra("players", playersStr);
+                                getActivity().startActivity(i);
 
-                    String playersStr = obj.getString("players");
-                    JSONArray players = new JSONArray(playersStr);
-                    // first three places
-                    JSONObject leadPlayer = players.getJSONObject(0);
-                    firstPlaceText.setText("1 - " + leadPlayer.getString("U_Name"));
-                    leadPlayer = players.getJSONObject(1);
-                    secondPlaceText.setText("2 - " + leadPlayer.getString("U_Name"));
-                    leadPlayer = players.getJSONObject(2);
-                    thirdPlaceText.setText("3 - " + leadPlayer.getString("U_Name"));
-
-                    for (int i = 0 ; i < players.length(); i++) {
-                        JSONObject player = players.getJSONObject(i);
+                                countDownTimer.cancel();
+                            } else if (status.equals("gameNotFinished")) {
+                                JSONObject newUser = obj.getJSONObject("U_Obj");
+                                if (!user.getName().equals(newUser.getString("U_Name")))
+                                    Toast.makeText(getActivity(), newUser.getString("U_Name") + " Finished", Toast.LENGTH_LONG).show();
+                                int playerCount = obj.getInt("playerCount");
+                                if (playerCount > 1) {
+                                    playerCountText.setText("" + playerCount);
+                                    playerCountDesText.setText("Players finished.");
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-        }
-    };
+        };
+        IntentFilter filter = new IntentFilter("com.toxicmania.BroadcastReceiver");
+        getActivity().registerReceiver(receiver, filter);
+
+        startTimer();
+    }
 
     private void startTimer() {
         final int timeout = 5*60; //in seconds
         timerProgress.setMax(timeout);
-        CountDownTimer countDownTimer = new CountDownTimer(timeout*1000, 1000) {
+        countDownTimer = new CountDownTimer(timeout*1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 int time = (int)millisUntilFinished/1000;
@@ -127,9 +162,10 @@ public class MultiplayResultFragment extends Fragment {
     }
 
     private void timeout() {
+        System.out.println("++++ timeout results");
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
         alertDialog.setTitle("Game session error!");
-        alertDialog.setMessage("Sorry! It appears something wrong in the game server.");
+        alertDialog.setMessage("Sorry! It appears that something went wrong in the game server.");
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

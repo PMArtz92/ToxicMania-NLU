@@ -47,12 +47,14 @@ module.exports.triggerFireBase = function(Se_Id,body){
 
     firebaseIds.then(function(results){
         console.log(results);
-        var temp = {};
-        temp.body = body;
+        //var temp = {};
+        //temp.body = body;
 
-        main.notification = temp;
+        //main.notification = temp;
         main.registration_ids = results;
-        main.data =  {"id":3};
+        main.data =  body;
+
+        main.data.appID = "com.toxicmania.toxicmania";
 
         const req = https.request(options, (res) => {
             let data = [];

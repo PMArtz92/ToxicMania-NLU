@@ -3,16 +3,11 @@ package com.toxicmania.toxicmania;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
-import com.toxicmania.toxicmania.activity.MainActivity;
 import com.toxicmania.toxicmania.activity.PlayActivity;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,8 +43,6 @@ public class Controller {
             newQIndex++;
         } else {
             if (isNetworkAvailable()) {
-                // TODO: 10/24/2017 change url
-//                 String url = "https://demo6365273.mockable.io/get-next-question-set?user=" + user.getID() + "&reputation=" + user.getReputation();
                 String url = "https://app.ucsccareerfair.com/question/NextTenQuestion?user=" + user.getID() + "&reputation=" + user.getReputation();
                 //Log.i(TAG, "Question set loading...");
                 //Log.i(TAG, url);
@@ -122,7 +115,7 @@ public class Controller {
             volleyService.volleyPost("POST", url, finalObject, new VolleyCallback() {
                 @Override
                 public void notifySuccess(String requestType, JSONObject response) {
-                    //Log.d(TAG, "Volley JSON post success!\n" + response);
+                    Log.d(TAG, "Volley JSON post success!\n" + response);
                     try {
                         JSONArray result = response.getJSONArray("result");
                         JSONObject userObj = result.getJSONObject(0);
@@ -153,14 +146,14 @@ public class Controller {
     }
 
     private boolean isNetworkAvailable() {
-        System.out.println("Checking network...");
+        // System.out.println("Checking network...");
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void submitAnswersOnStop(User user) {
+    public void submitAnswersOnStop() {
         if (answeredQIndex > 0) {
             submitAnswersToServer(Arrays.copyOfRange(answeredQuestions, 0, answeredQIndex));
             answeredQuestions = new Question[Q_BULK_COUNT];

@@ -1,93 +1,178 @@
-<RelativeLayout android:id="@+id/about_main_layout"
+<ScrollView android:id="@+id/about_main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#fff">
+    android:background="#fff" >
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" >
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="23dp"
+            android:text="@string/what_is_toxic"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/textView"
+            android:textColor="@color/colorSecondaryDark"/>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView"
+            android:paddingTop="10dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp"
+            android:text="@string/what_is_toxic_1"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textColor="@color/black_overlay"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/paly_guid"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/textView2"
+            android:textColor="@color/colorSecondaryDark"
+            android:layout_below="@+id/textView3"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/paly_guid_1"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textColor="@color/black_overlay"
+            android:layout_below="@+id/textView2"
+            android:layout_alignParentStart="true" />
+
+        <LinearLayout
+            android:id="@+id/imagely"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="23dp"
-                android:text="@string/what_is_toxic"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:id="@+id/textView"
-                android:textColor="@color/colorSecondaryDark"/>
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/textView"
-                android:paddingTop="10dp"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:paddingBottom="20dp"
-                android:text="@string/what_is_toxic_1"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                android:textColor="@color/black_overlay"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/paly_guid"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:id="@+id/textView2"
-                android:textColor="@color/colorSecondaryDark"
-                android:layout_below="@+id/textView3"
-                android:layout_centerHorizontal="true" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:text="@string/paly_guid_1"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                android:textColor="@color/black_overlay"
-                android:layout_below="@+id/textView2"
-                android:layout_alignParentStart="true" />
+            android:layout_below="@id/textView4"
+            android:weightSum="3"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/imageView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/textView4"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="26dp"
-                android:foregroundGravity="center_vertical"
-                android:src="@drawable/ic_hw_rating_faces" />
+                android:layout_height="120dp"
+                android:src="@drawable/new_rating_smile"
+                android:layout_weight="1"/>
 
-        </RelativeLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="120dp"
+                android:src="@drawable/new_rating_nutral"
+                android:layout_weight="1"/>
 
-    </ScrollView>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="120dp"
+                android:src="@drawable/new_rating_angry"
+                android:layout_weight="1"/>
 
-</RelativeLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textvpl4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/play_guide_2"
+            android:layout_below="@id/imagely"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textColor="@color/black_overlay"
+            android:layout_alignParentStart="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/marking_criteria"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/header_3"
+            android:textColor="@color/colorSecondaryDark"
+            android:layout_below="@+id/textvpl4"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/body_3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/marking_criteria_body"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textColor="@color/black_overlay"
+            android:layout_below="@+id/header_3"
+            android:layout_marginBottom="30dp"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/muliplayer_header"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/header_4"
+            android:textColor="@color/colorSecondaryDark"
+            android:layout_below="@+id/body_3"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/body_4"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/multiplayer_body"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textColor="@color/black_overlay"
+            android:layout_below="@+id/header_4"
+            android:layout_marginBottom="20dp"
+            android:layout_alignParentStart="true" />
+
+    </RelativeLayout>
+
+</ScrollView>

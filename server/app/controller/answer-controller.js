@@ -1,6 +1,10 @@
 const mysql = require('mysql');
 const config = require('../config/conf');
 const   _ = require('lodash');
+const https = require('https');
+
+
+const firebaseHelper = require('./firebase_helperfunction');
 
 
 var connection = mysql.createConnection(
@@ -17,9 +21,9 @@ module.exports.postAnswer = function(req, res, next) {
   var type = Q_Id.split('#A#-')[0];
   var sql  = '';
   if (type == 'A'){
-    let sql = 'INSERT INTO `user_answer` (`U_Id`, `Q_Id`, `Readable`, `Toxicity`, `Posted`,`Skipped`) VALUES (?,?,?,?,?,?)';
+    let sql = 'INSERT IGNORE INTO `user_answer` (`U_Id`, `Q_Id`, `Readable`, `Toxicity`, `Posted`,`Skipped`) VALUES (?,?,?,?,?,?)';
   }else if (type == 'B') {
-    let sql =  'INSERT INTO `user_known_answer` (`U_Id`, `Q_Id`, `Readable`, `Toxicity`, `Posted`,`Skipped`) VALUES (?,?,?,?,?,?)';
+    let sql =  'INSERT IGNORE INTO `user_known_answer` (`U_Id`, `Q_Id`, `Readable`, `Toxicity`, `Posted`,`Skipped`) VALUES (?,?,?,?,?,?)';
   }else{
     return next("Invalid Question Id");
   }
@@ -38,29 +42,33 @@ module.exports.postAnswerMock = function(req, res, next) {
 
 module.exports.postAnswerMultiplay = function(req, res, next) {
     // u_id, answers, mult_session must come in the api call
-
-    //var answers = JSON.parse(req.body.answers);
-    //var mult_session = JSON.parse(req.body.mult_session);
+    // console.log(req.body);
+    // var answers = JSON.parse(req.body.answers);
+    // var mult_session = JSON.parse(req.body.mult_session);
     var answers = req.body.answers;
     var mult_session = req.body.mult_session;
     var u_id = req.body.u_id;
     var mode = 'multi';
     var promises = [];
 
-    answers.questions.forEach(function (element) {
+    answers.forEach(function (element) {
         var x = saveUserAnswer(u_id, element, mode);
         promises.push(x);
     });
 
-    // Return true if exit condition is met
-    let exit = checkExit(mult_session);
-    if (exit == true){
-        // Call chamath's method here
-        makeSummary(mult_session);
-    }
 
     Promise.all(promises)
         .then(function (results) {
+
+
+            // // Return true if exit condition is met
+            var exit = checkExit(mult_session);
+            console.log("exit");
+            console.log(exit);
+            // if (exit === 1){
+            //     makeSummary(mult_session);
+            // }
+
             connection.beginTransaction(function (error) {
                 if (error) {console.log(error);}
 
@@ -79,6 +87,14 @@ module.exports.postAnswerMultiplay = function(req, res, next) {
                             })
                         }
                     });
+
+                    let body  = {};
+                    body.event = 'finish';
+                    body.status = 'gameNotFinished';
+                    body.session_Id = mult_session;
+                    body.U_Obj = rows[0];
+
+                    firebaseHelper.triggerFireBase(mult_session,body);
                     res.send({'result': rows});
                 });
             });
@@ -162,7 +178,7 @@ function saveUserAnswer(u_id, ans, mode){
                     console.log(error);
                 }
                 // Add new record to the user_answer table
-                let sql = 'INSERT INTO `user_answer` (`U_Id`, `Q_Id`, `Readable`, `Toxicity`, `Posted`, `Skipped`) VALUES (?,?,?,?,?,?)';
+                let sql = 'INSERT IGNORE INTO `user_answer` (`U_Id`, `Q_Id`, `Readable`, `Toxicity`, `Posted`, `Skipped`) VALUES (?,?,?,?,?,?)';
                 connection.query(sql,[u_id,q_id,readability,toxicity,0, skipped], function(err, rows, fields) {
                     if (err){
                         return connection.rollback(function () {
@@ -220,7 +236,7 @@ function saveUserAnswer(u_id, ans, mode){
                 }
 
                 // Add new record to the user_known_answer table
-                let sql =  'INSERT INTO `user_known_answer` (`U_Id`, `Q_Id`, `Readable`, `Toxicity`, `Posted`, `Skipped`) VALUES (?,?,?,?,?,?)';
+                let sql =  'INSERT IGNORE INTO `user_known_answer` (`U_Id`, `Q_Id`, `Readable`, `Toxicity`, `Posted`, `Skipped`) VALUES (?,?,?,?,?,?)';
                 connection.query(sql,[u_id,q_id,readability,toxicity,0, skipped], function(err, rows, fields) {
                     if (err){
                         return connection.rollback(function () {
@@ -303,7 +319,7 @@ function saveUserAnswer(u_id, ans, mode){
 
                                             else{
 
-                                                // Update marks in the session_user table for multiplayer games
+                                                // Update marks in the session_user table for multilayer games
                                                 let sql = 'UPDATE Session_user SET Mark = Mark + ? WHERE U_Id = ?';
                                                 connection.query(sql,[marks, u_id], function(err, rows, fields) {
                                                     if (err){
@@ -312,14 +328,25 @@ function saveUserAnswer(u_id, ans, mode){
                                                             console.log(err);
                                                         })
                                                     }
-                                                    connection.commit(function (error) {
-                                                        if (error){
+
+                                                    // Update marks in the user table for multilayer player games
+                                                    let sql = 'UPDATE user SET Mark = Mark + ? WHERE U_Id = ?';
+                                                    connection.query(sql,[marks, u_id], function(err, rows, fields) {
+                                                        if (err){
                                                             return connection.rollback(function () {
                                                                 reject();
-                                                                console.log(error);
+                                                                console.log(err);
                                                             })
                                                         }
-                                                        resolve('Complete');
+                                                        connection.commit(function (error) {
+                                                            if (error){
+                                                                return connection.rollback(function () {
+                                                                    reject();
+                                                                    console.log(error);
+                                                                })
+                                                            }
+                                                            resolve('Complete');
+                                                        });
                                                     });
                                                 });
                                             }
@@ -349,60 +376,69 @@ function checkExit(session_id){
             console.log(err);
         }
         else {
-            console.log('count updated');
+            console.log('count updated, session: ' + session_id);
+            let sql2 = 'SELECT Player_Count, Respond_Count FROM Session WHERE Se_Id = ?';
+            connection.query(sql2,[session_id], function(err, rows, fields) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    let p_count = rows[0].Player_Count;
+                    let r_count = rows[0].Respond_Count;
+                    console.log("players: " + p_count + ", reponds: " + r_count);
+                    if (p_count === r_count){
+                        makeSummary(session_id);
+                        console.log("____true");
+                        return 1;
+                    }
+                    else{
+                       	console.log("____false");
+                        return 0;
+                    }
+                }
+            });
         }
     });
 
-    let sql2 = 'SELECT Player_Count, Respond_Count FROM Session WHERE Se_Id = ?';
-    connection.query(sql2,[session_id], function(err, rows, fields) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            let p_count = rows[0].Player_Count;
-            let r_count = rows[0].Respond_Count;
 
-            if (p_count == r_count){
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-    });
 }
 
 
 function makeSummary(Se_Id) {
-  console.log(Se_Id);
-  var sql = 'SELECT * FROM `Session_user` WHERE `Se_Id` = ?;';
-  connection.query(sql,[Se_Id],function(err, rows, fields) {
-    if (err) {
-      console.log(err);
-      return err;
-    }
-    let result = rows;
-    result.sort(function(a, b) {
-        var nameA = parseInt(a.Mark);
-        var nameB = parseInt(b.Mark);
-        if (nameA < nameB) {
-          return 1;
+    console.log("Making summary for game : " + Se_Id);
+    var sql = 'SELECT * FROM `Session_user` WHERE `Se_Id` = ?;';
+    connection.query(sql,[Se_Id],function(err, rows, fields) {
+        if (err) {
+            console.log(err);
+            return err;
         }
-        if (nameA > nameB) {
-          return -1;
-        }
-        return 0;
-      });
-    let sql = 'UPDATE `Session` SET `Ready`= ? , `Summary`  = ? WHERE `Se_Id` = ?;';
-    connection.query(sql,[1,JSON.stringify(result),Se_Id],function(err, rows, fields) {
-      if (err) {
-        console.log(err);
-        return err;
-      }
-      console.log("Complete");
-      // need firebase trigger
+        let result = rows;
+        result.sort(function(a, b) {
+            var nameA = parseInt(a.Mark);
+            var nameB = parseInt(b.Mark);
+            if (nameA < nameB) {
+                return 1;
+            }
+            if (nameA > nameB) {
+                return -1;
+            }
+            return 0;
+        });
+        let sql = 'UPDATE `Session` SET `Ready`= ? , `Summary`  = ? WHERE `Se_Id` = ?;';
+        connection.query(sql,[1,JSON.stringify(result),Se_Id],function(err, rows, fields) {
+            if (err) {
+                console.log(err);
+                return err;
+            }
+            let body  = {};
+            body.event = 'finish';
+            body.status = 'gameFinished';
+            body.players = JSON.stringify(result);
+            body.session_Id = Se_Id;
+            firebaseHelper.triggerFireBase(Se_Id,body);
+            console.log("Complete");
+        });
     });
-  });
 }
 
 
@@ -507,3 +543,88 @@ module.exports.leaderBoard = function(req, res, next) {
     });
 
 };
+
+//submitData();
+function submitData() {
+    console.log("Test");
+    let minimum_mark = 350;
+    let limit = 1000;
+    let sql2 = 'SELECT user.U_Id,Q_Id,Toxicity,Readable FROM `user_answer` INNER JOIN user ON user_answer.U_Id = user.U_Id WHERE `Skipped` = 0  AND `Posted` = 0 AND Mark > ? LIMIT ?;';
+    connection.query(sql2,[minimum_mark,limit],function(err, rows, fields) {
+        if(err){
+            console.log(err);
+        }else{
+            console.log(rows);
+            _.forEach(rows,(value) => {
+                let readableAndInEnglish  = value.Readable;
+                let toxic = value.Toxicity;
+                if (readableAndInEnglish !=='' && toxic !==''){
+                    let answer = {};
+                    let inside ={};
+                    if (readableAndInEnglish === '1'){
+                        inside.readableAndInEnglish = "yes";
+                    }else{
+                        inside.readableAndInEnglish="no"
+                    }
+                    inside.toxic = toxic;
+                    answer.answer = inside;
+
+                    let Q_ID = value.Q_Id.split('#A#-')[1];
+                    let path = "/client_jobs/wp_v1_x10k_rmf60/questions/"+Q_ID+'/answers/'+value.U_Id;
+                    let options = {
+                        hostname: 'crowd9api-dot-wikidetox.appspot.com',
+                        port: 443,
+                        path: path,
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    };
+
+                    console.log(options);
+                    console.log(answer);
+
+
+                    const req = https.request(options, (res) => {
+                        let data = [];
+                        res.on('data', (chunk) => {
+                            data.push(chunk);
+                        }).on('end', () => {
+                            let buffer = Buffer.concat(data);
+                            // var parsedBuffer = buffer.toString('utf-8');
+                            let parsedBuffer = JSON.parse(buffer);
+                            if (parsedBuffer.result){
+                                console.log(parsedBuffer);
+                                let sql = 'UPDATE `user_answer` SET `Posted` = 1 WHERE `Q_Id` = ? AND `U_Id` = ?';
+                                connection.query(sql,[value.Q_Id,value.U_Id],function(err, rows, fields) {
+                                    if (err) {
+                                        console.log(err)
+                                    }else{
+                                        console.log(rows)
+                                    }
+                                    });
+                            }else{
+                                console.log(parsedBuffer);
+                            }
+                        });
+                    });
+                    req.on('error', (e) => {
+                        console.error(e);
+                    });
+
+                    req.write(JSON.stringify(answer));
+                    req.end();
+
+
+                }
+//
+
+            });
+        }
+
+    });
+
+
+
+
+}

@@ -16,9 +16,11 @@ var express = require('express'),
     passport = require('passport'),
     https = require('https');
 
+////////
 //////
+////
 //
-//
+
 
 var connection = mysql.createConnection(
     config.database
@@ -40,8 +42,8 @@ var dbConnect = new Promise(function(resolve, reject) {
 
 // call backend function after database connected
 dbConnect.then(function(results){
-     // questionController.feafetchQuestions();
-     // questionController.feafetchKnownQuestions();
+//      questionController.feafetchQuestions();
+  //    questionController.feafetchKnownQuestions();
 }).catch(function(err) {
     console.log("Failed:", err);
 });
@@ -112,15 +114,8 @@ app.use('/multiplay', multiplay);
 
 
 app.get("/",function(req,res){
-connection.query('SELECT * from admin_details', function(err, rows, fields) {
-// connection.end();
-  if (!err){
-    console.log('The solution is: ', rows);
-    res.send(rows);
-  }
-  else
-    console.log('Error while performing Query.');
-  });
+console.log("base domain hit");
+res.send("hi");
 });
 
 

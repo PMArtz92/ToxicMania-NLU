@@ -35,6 +35,7 @@ public class NavDrawerActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //System.out.println("\n\n>>>>>>>>>>>> NavDrawerActivity CREATED <<<<<<<<<<<<<\n\n");
         setContentView(R.layout.activity_nav_drawer);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -73,7 +74,6 @@ public class NavDrawerActivity extends AppCompatActivity
         TextView userEmail = (TextView) header.findViewById(R.id.navHeaderEmail);
         userName.setText(uName);
         userEmail.setText(uEmail);
-
     }
 
     @Override
@@ -85,28 +85,6 @@ public class NavDrawerActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.nav_drawer, menu);
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -145,18 +123,24 @@ public class NavDrawerActivity extends AppCompatActivity
         return true;
     }
 
-    protected void onPostResume() {
-//        isLogged = settings.getBoolean("is_logged", false);
-//        if (!isLogged) {
-//            //Log.i(TAG, "not logged in, send to login");
-//            Intent k = new Intent(this, LoginActivity.class);
-//            startActivity(k);
-//        } else {
-//            // update user object
-//            //Log.i(TAG, "Updating user object...");
-//            user = new User(settings.getString("ToxicUser", ""));
-//        }
+    @Override
+    protected void onStop() {
+        //System.out.println("\n\n>>>>>>>>>>>> NavDrawerActivity onStop <<<<<<<<<<<<<\n\n");
+        settings.edit().remove("userDataLoaded").apply();
+        super.onStop();
+    }
 
+    protected void onPostResume() {
+        isLogged = settings.getBoolean("is_logged", false);
+        if (!isLogged) {
+            //Log.i(TAG, "not logged in, send to login");
+            Intent k = new Intent(this, LoginActivity.class);
+            startActivity(k);
+        } else {
+            // update user object
+            //Log.i(TAG, "Updating user object...");
+            user = new User(settings.getString("ToxicUser", ""));
+        }
         super.onPostResume();
     }
 

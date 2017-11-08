@@ -23,7 +23,7 @@ import org.json.JSONObject;
 class MultiGameController {
 
     private Question[] newQuestions;
-    private String TAG = "Controller";
+    private String TAG = "MultiplayActivity";
     private int qCount = 0;
     private VolleyService volleyService;
     public User user;
@@ -62,6 +62,7 @@ class MultiGameController {
                         }
                         playActivity.setNextQuestion(newQuestions[0]);
                         qCount = 1;
+                        playActivity.setLevelBound(array.length());
                         //Log.i(TAG, "Question set loaded!");
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -76,7 +77,7 @@ class MultiGameController {
         }
     }
 
-    public void submitQuestionSetToServer() {
+    void submitQuestionSetToServer() {
         // building send object
         JSONObject finalObject = new JSONObject();
         JSONArray qArray = new JSONArray();
@@ -91,6 +92,7 @@ class MultiGameController {
             }
             finalObject.put("answers", qArray);
             finalObject.put("u_id", user.getID());
+            finalObject.put("mult_session", gameKey);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -110,7 +112,7 @@ class MultiGameController {
     }
 
     private boolean isNetworkAvailable() {
-        System.out.println("Checking network...");
+        // System.out.println("Checking network...");
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) playActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -40,6 +41,7 @@ public class LeaderBoardFragment extends Fragment {
     private ListView listView;
     private ProgressBar progressBar;
     SharedPreferences sharedPreferences;
+    Button continueBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,7 +51,21 @@ public class LeaderBoardFragment extends Fragment {
         sharedPreferences = parent.getSharedPreferences("PREFS", 0);
         user = new User(sharedPreferences.getString("ToxicUser", ""));
 
+        return inflater.inflate(R.layout.fragment_leader_board, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        progressBar = (ProgressBar) parent.findViewById(R.id.progressBar);
+        listView = (ListView) parent.findViewById(R.id.leader_board_list);
+
+        continueBtn = (Button) getActivity().findViewById(R.id.leaderboard_continue_btn);
+        continueBtn.setVisibility(View.INVISIBLE);
+
         volleyService = new VolleyService(parent);
+        progressBar.setVisibility(View.VISIBLE);
 
         // get data
         if (parent.isNetworkAvailable()) {
@@ -101,17 +117,6 @@ public class LeaderBoardFragment extends Fragment {
             });
             alertDialog.show();
         }
-
-        return inflater.inflate(R.layout.fragment_leader_board, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        progressBar = (ProgressBar) parent.findViewById(R.id.progressBar);
-        listView = (ListView) parent.findViewById(R.id.leader_board_list);
-
     }
 
     private void dataLoaded() {
@@ -137,11 +142,8 @@ public class LeaderBoardFragment extends Fragment {
 
         public LeaderBoardAdapter(Activity context, User[] items) {
             super(context, R.layout.leader_board_entry_layout, items);
-            // TODO Auto-generated constructor stub
-
             this.context=context;
             this.items=items;
-            System.out.println(">>> " + items.length);
         }
 
         @Override
@@ -157,13 +159,13 @@ public class LeaderBoardFragment extends Fragment {
 
             User tmp = items[position];
             Picasso.with(getActivity()).load(tmp.getUrl()).resize(130, 130).centerCrop().transform(new CircleTransform()).into(imageView);
-            if (tmp.getLevel() < 4) {
-                rank.setText("" + tmp.getLevel());
+            rank.setText("" + tmp.getLevel());
+            String[] nameParts = tmp.getName().split(" ");
+            if (nameParts.length > 2) {
+                userName.setText(nameParts[0] + " " + nameParts[1]);
             } else {
-                rank.setVisibility(View.GONE);
-//                imageView.set
+                userName.setText(tmp.getName());
             }
-            userName.setText(tmp.getName());
             userRep.setText("" + tmp.getReputation());
             userQCount.setText("" + tmp.getLevelProgress());
 

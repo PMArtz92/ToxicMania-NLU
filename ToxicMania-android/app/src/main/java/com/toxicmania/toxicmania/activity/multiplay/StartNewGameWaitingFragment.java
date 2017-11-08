@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,11 +18,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
+import android.widget.Toast;
+import com.android.volley.VolleyError;
 import com.toxicmania.toxicmania.R;
 import com.toxicmania.toxicmania.User;
+import com.toxicmania.toxicmania.VolleyCallback;
 import com.toxicmania.toxicmania.VolleyService;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,6 +37,16 @@ public class StartNewGameWaitingFragment extends Fragment {
     private TextView timerText, playerCountText, playerCountDesText, gameKeyText;
     private Button startGameBtn;
     private boolean isGameOn = false;
+    private ProgressBar waitProgress;
+    private MultiplayActivity activity;
+    private CountDownTimer countDownTimer;
+    private BroadcastReceiver receiver;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (MultiplayActivity) context;
+    }
 
     @Nullable
     @Override
@@ -45,11 +55,6 @@ public class StartNewGameWaitingFragment extends Fragment {
         user = activity.user;
         volleyService = activity.volleyService;
         gameKey = activity.gameKey;
-
-        // listener for firebase messages
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver((mMessageReceiver),
-                new IntentFilter("MyData")
-        );
 
         return inflater.inflate(R.layout.fragment_start_new_game_waiting, container, false);
     }
@@ -61,6 +66,9 @@ public class StartNewGameWaitingFragment extends Fragment {
         //disable start game button
         startGameBtn = (Button) getActivity().findViewById(R.id.StartGame);
         startGameBtn.setEnabled(false);
+
+        waitProgress = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+        waitProgress.setVisibility(View.INVISIBLE);
 
         // share game ID
         Button shareGameKey = (Button) getActivity().findViewById(R.id.ShareGameKey);
@@ -81,7 +89,7 @@ public class StartNewGameWaitingFragment extends Fragment {
         startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startGame();
+                sendStartGameRequest();
             }
         });
 
@@ -95,6 +103,57 @@ public class StartNewGameWaitingFragment extends Fragment {
 
         playerCountText = (TextView) getActivity().findViewById(R.id.playerCount);
         playerCountDesText = (TextView) getActivity().findViewById(R.id.playerCountDescription);
+
+        // setting up broadcast receiver
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String msg = intent.getExtras().getString("text");
+                if (msg != null) {
+                    try {
+                        JSONObject obj = new JSONObject(msg);
+                        String event = obj.getString("event");
+                        if (event.equals("start")) {
+                            String status = obj.getString("status");
+                            int playerCount = obj.getInt("playerCount");
+
+                            if (status.equals("gameStarted")) {
+                                startGame();
+                            } else if (status.equals("ready")) {
+                                startGameBtn.setEnabled(true);
+                                JSONObject newUser = obj.getJSONObject("U_Obj");
+                                if (!user.getName().equals(newUser.getString("U_Name")))
+                                    Toast.makeText(getActivity(), newUser.getString("U_Name") + " Joined", Toast.LENGTH_LONG).show();
+                                if (playerCount > 1) {
+                                    playerCountText.setText("" + playerCount);
+                                    playerCountDesText.setText("Players connected.");
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter("com.toxicmania.BroadcastReceiver");
+        getActivity().registerReceiver(receiver, filter);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            getActivity().unregisterReceiver(receiver);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("Receiver not registered")) {
+                // Ignore this exception. This is exactly what is desired
+                Log.w(TAG,"Tried to unregister the reciver when it's not registered");
+            } else {
+                // unexpected, re-throw
+                throw e;
+            }
+        }
     }
 
     @Override
@@ -117,7 +176,7 @@ public class StartNewGameWaitingFragment extends Fragment {
     private void startTimer() {
         final int timeout = 5*60; //in seconds
         timerProgress.setMax(timeout);
-        CountDownTimer countDownTimer = new CountDownTimer(timeout*1000, 1000) {
+        countDownTimer = new CountDownTimer(timeout*1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 int time = (int)millisUntilFinished/1000;
@@ -137,6 +196,7 @@ public class StartNewGameWaitingFragment extends Fragment {
     }
 
     private void timeout() {
+        System.out.println("++++ timeout startNew");
         if (startGameBtn.isEnabled()) {
             startGameBtn.callOnClick();
         } else {
@@ -154,36 +214,50 @@ public class StartNewGameWaitingFragment extends Fragment {
         }
     }
 
+    private void sendStartGameRequest() {
+        waitProgress.setVisibility(View.VISIBLE);
+        JSONObject finalObject = new JSONObject();
+        try {
+            finalObject.put("U_Id", user.getID());
+            finalObject.put("Se_Id", gameKey);
+            finalObject.put("check", 0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //send start game request to server
+        String url = "https://app.ucsccareerfair.com/multiplay/startGame";
+        volleyService.volleyPost("POST", url, finalObject, new VolleyCallback() {
+            @Override
+            public void notifySuccess(String requestType, JSONObject response) {
+                Log.d(TAG, "Volley: Requesting to start multiplayer game session : " + response);
+                waitProgress.setVisibility(View.GONE);
+                try {
+                    boolean success = response.getBoolean("success");
+                    if (success) {
+                        Toast.makeText(getActivity(), "Game started!", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Server error!", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void notifyError(String requestType, VolleyError error) {
+                Log.e(TAG, "Volley Error: Requesting to start multiplayer game session : " + error);
+                Toast.makeText(getActivity(), "Server error!", Toast.LENGTH_LONG).show();
+                waitProgress.setVisibility(View.GONE);
+            }
+        });
+    }
+
     private void startGame() {
+        countDownTimer.cancel();
         isGameOn = true;
-        Intent i = new Intent(getActivity(), MultiGamePlayActivity.class);
+        Intent i = new Intent(activity, MultiGamePlayActivity.class);
         i.putExtra("gameKey", gameKey);
         startActivity(i);
     }
-
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String msg = intent.getExtras().getString("text");
-            try {
-                JSONObject obj = new JSONObject(msg);
-                String event = obj.getString("event");
-                if (event.equals("start")) {
-                    String status = obj.getString("status");
-                    int playerCount = obj.getInt("playerCount");
-
-                    if (status.equals("ready")) {
-                        startGameBtn.setEnabled(true);
-                    }
-                    if (playerCount > 1) {
-                        playerCountText.setText("" + playerCount);
-                        playerCountDesText.setText("Players connected.");
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-    };
 }

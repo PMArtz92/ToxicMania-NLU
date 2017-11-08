@@ -18,7 +18,7 @@ import com.toxicmania.toxicmania.R;
  */
 public class HowToPlayFragment extends Fragment {
 
-    private TextView textView,textView2,textView3,textView4;
+    private TextView textView,textView2,textView3,textView4, textView5;
 
 
     public HowToPlayFragment() {
@@ -44,9 +44,11 @@ public class HowToPlayFragment extends Fragment {
         textView2 = (TextView)getActivity().findViewById(R.id.textView2);
         textView3 = (TextView)getActivity().findViewById(R.id.textView3);
         textView4 = (TextView)getActivity().findViewById(R.id.textView4);
+        textView5 = (TextView)getActivity().findViewById(R.id.textvpl4);
 
 
         textView3.setTypeface(robotoRegular);
+        textView5.setTypeface(robotoRegular);
         textView4.setTypeface(robotoRegular);
         textView.setTypeface(robotoBlack);
         textView2.setTypeface(robotoBlack);

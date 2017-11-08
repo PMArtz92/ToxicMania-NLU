@@ -79,6 +79,7 @@
                 android:layout_marginBottom="15dp"
                 android:layout_marginEnd="15dp"
                 android:onClick="nextAction"
+                android:layout_below="@+id/imageView2"
                 android:text="Next" />
 
         </RelativeLayout>

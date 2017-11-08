@@ -15,7 +15,6 @@
     <string name="decline_btn_txt">Decline</string>
     <string name="accept_btn_txt">Accept</string>
 
-    <string name="about_nextbtn_value">Next</string>
     <string name="about_content">
         In a world filled with screened identities, where your only interaction is through a light box and a ridiculous username it’s easy to hurl insults, but it’s difficult to completely rid the world of this menace. ToxicMania accomplishes this social cause with the power of crowdsourcing. Because where a few fail, many can prosper.
     </string>
@@ -24,7 +23,6 @@
         By using toxicmania you contribute to identify the toxic sentences that people use in day-today life. These data will be sent to Google to improve their
         <a href="https://www.perspectiveapi.com">perspective API </a>, which will improve online conversations in the future.
     </string>
-
 
     <!-- Sign-in status messages -->
     <string name="signed_in_fmt">Signed in as: %s</string>
@@ -41,7 +39,6 @@
 
     <!-- Activity Names and Descriptions -->
 
-    <!-- TODO(user): replace with your real server client ID -->
     <!-- Server Client ID.  This should be a valid Web OAuth 2.0 Client ID obtained
          from https://console.developers.google.com/ -->
     <string name="question_text_view_default">Loading...</string>
@@ -68,9 +65,6 @@
     <string name="badge05_name">Grand Master</string>
     <string name="begbadge05_des">Awarded for achieving 1000 Reputation</string>
 
-
-    <!-- TODO: Remove or change this placeholder text -->
-
     <string name="what_is_toxic">What are Toxic comments?</string>
     <string name="what_is_toxic_1">Comments posted by people in online conversations that could make others feel uncomfortable,
         insulted, abused, threatened or hurt.
@@ -79,13 +73,18 @@
     <string name="paly_guid">How to Play</string>
     <string name="paly_guid_1">You need to rate given comments by it\'s toxic level. Below are the index for the toxic ratings.
     </string>
+    <string name="play_guide_2">If the sentence is not readable in english, please un-check "Readable in English" check box and submit.</string>
 
-    <string name="sm_notatall">Not Toxic At All \n (1 star)</string>
-    <string name="sm_somewaht">Somewhat Toxic \n (2 stars)</string>
-    <string name="sm_very">Very Toxic \n (3 stars)</string>
-    <string name="title_activity_temp">TempActivity</string>
     <string name="title_activity_nav_drawer">ToxicMania</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="marking_criteria">Marking Criteria</string>
+    <string name="marking_criteria_body">ToxicMania has two sets of comments as \"New Comments\" and
+        \"Pre-Rated Comments\". When players request comments to rate, we mix in \"Pre-Rated Comments\" as
+        well, depending on the number of points. Player given ratings and original ratings for \"Pre-Rated Comments\"
+        will be matched to generate each player\'s final marks.  </string>
+    <string name="muliplayer_header">Muliplayer</string>
+    <string name="multiplayer_body">You can now play with your friends and beat
+        them in personal challenge matches. Just hit Multiplayer button in home and choose to start a new game or join using a
+        game ID. Each game will receive 20 comments to rate and 4 minutes for players to finish rating them. Timer will begin
+         once the game owner starts the game. Players will be given marks based on the correctness and time they spent to submit.
+    </string>
 </resources>

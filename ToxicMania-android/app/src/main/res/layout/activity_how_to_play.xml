@@ -37,7 +37,7 @@
                 android:paddingBottom="20dp"
                 android:text="@string/what_is_toxic_1"
                 android:textAlignment="center"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textColor="@color/black_overlay"/>
 
             <TextView
@@ -62,22 +62,116 @@
                 android:paddingTop="5dp"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
+                android:layout_marginBottom="10dp"
                 android:text="@string/paly_guid_1"
                 android:textAlignment="center"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textColor="@color/black_overlay"
                 android:layout_below="@+id/textView2"
                 android:layout_alignParentStart="true" />
 
-            <ImageView
-                android:id="@+id/imageView"
+            <LinearLayout
+                android:id="@+id/imagely"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textView4"
+                android:weightSum="3"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="120dp"
+                    android:src="@drawable/new_rating_smile"
+                    android:layout_weight="1"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="120dp"
+                    android:src="@drawable/new_rating_nutral"
+                    android:layout_weight="1"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="120dp"
+                    android:src="@drawable/new_rating_angry"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textvpl4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/textView4"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:foregroundGravity="center_vertical"
-                android:src="@drawable/ic_hw_rating_faces" />
+                android:text="@string/play_guide_2"
+                android:layout_below="@id/imagely"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textColor="@color/black_overlay"
+                android:layout_alignParentStart="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/marking_criteria"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/header_3"
+                android:textColor="@color/colorSecondaryDark"
+                android:layout_below="@+id/textvpl4"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/body_3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/marking_criteria_body"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textColor="@color/black_overlay"
+                android:layout_below="@+id/header_3"
+                android:layout_marginBottom="20dp"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/muliplayer_header"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/header_4"
+                android:textColor="@color/colorSecondaryDark"
+                android:layout_below="@+id/body_3"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/body_4"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/multiplayer_body"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textColor="@color/black_overlay"
+                android:layout_below="@+id/header_4"
+                android:layout_marginBottom="20dp"
+                android:layout_alignParentStart="true" />
 
             <Button
                 android:id="@+id/button2"
@@ -85,12 +179,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="goHome"
-                android:layout_alignTop="@+id/imageView"
-                android:layout_marginTop="130dp"
                 android:text="continue"
-                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="23dp" />
+                android:layout_marginBottom="15dp"
+                android:layout_below="@id/body_4"/>
 
         </RelativeLayout>
 

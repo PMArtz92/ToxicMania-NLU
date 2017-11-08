@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -151,7 +152,16 @@ public class GPlusFragment extends Fragment implements GoogleApiClient.OnConnect
 
             updateUI(true);
 
-            User user = new User(acct.getId(), acct.getDisplayName(), acct.getEmail(), acct.getPhotoUrl().toString());
+            Uri photoUrl = acct.getPhotoUrl();
+            String photoName = "";
+
+            if(photoUrl != null) {
+                photoName = acct.getPhotoUrl().toString();
+            } else {
+                photoName = "https://i.stack.imgur.com/34AD2.jpg";
+            }
+
+            User user = new User(acct.getId(), acct.getDisplayName(), acct.getEmail(),photoName);
 
             //send user to server and get updated data.
             progressBar.setVisibility(View.VISIBLE);
@@ -182,7 +192,6 @@ public class GPlusFragment extends Fragment implements GoogleApiClient.OnConnect
             e.printStackTrace();
         }
 
-        // TODO: 10/24/2017 add url
         String url = "https://app.ucsccareerfair.com/user/newUser";
         VolleyService volleyService = new VolleyService(getActivity());
         volleyService.volleyPost("POST", url, finalObject, new VolleyCallback() {
